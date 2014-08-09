@@ -1,0 +1,339 @@
+__module_name__ = "Genetic Det"
+__module_version__ = "1.0"
+__module_description__ = "Determine the Genetic composition of an unborn foal using values set inside this script, MUST BE EDITED TO WORK, CONTAINS DUMMY VALUES"
+
+import hexchat
+import random
+#bout is my way of checking that im outputting
+#print("bout True")
+##############################################################
+############### Edit these things ############################
+##############################################################
+
+#Earth pure
+FGEP = 0
+MGEP = 0
+#Pega pure
+FGPP = 0
+MGPP = 0
+#Unipure
+FGUP = 0
+MGUP = 0
+#These are mixed genes, the Lowercase is the recessed gene
+# So FGEp is the Mother who is Earth with recessed Pega genes
+
+#Earth - Pega reces
+FGEp = 0
+MGEp = 0
+#Earth - Uni reces
+FGEu = 0
+MGEu = 0
+#Pega with Uni reces
+FGPu = 0
+MGPu = 0
+#Uni with Pega reces
+FGpU = 0
+MGpU = 0
+# This is for alicorn's 
+FGPU = 0
+MGPU = 0
+#set this to 1 if you want it to output to the highlighted hexchat window
+CaniJabber = 1
+
+##################################################
+###### DONOTCHANGE ANYTHING PAST THIS POINT ######
+##################################################
+######### Doing so will break the Script #########
+##################################################
+
+#Breakout varable if there is multiple genes or no genes in a parent DEPRECATED
+Breakout = 0
+
+#ismix = 1 if there is recess present or is alicorn DEPRECATED, KEEP Fismix at 1 
+#This is to activate the gene choser
+Fismix = 1
+Mismix = 0
+Bismix = Fismix + Mismix
+#Individual Genes
+#Female
+#Holder
+fG = 0
+fPureNE = 0
+
+fE1 = 1
+fE2 = 1
+
+fP1 = 7
+fP2 = 2
+
+fU1 = 3
+fU2 = 3
+#fP1 and mP1 are set to 7 to fix a bug where the calculations output a wrong gene combo
+#Male
+#Holder
+mG1 = 0
+mPureNE = 0
+
+mE1 = 1
+mE2 = 1
+
+mP1 = 7
+mP2 = 2
+
+mU1 = 3
+mU2 = 3
+
+#SPEC ALICORN Genes
+fAp = 4
+fAu = 5
+
+mAp = 4
+mAu = 5
+
+#Comparasion check to simplify the single gene to foal carry overs
+###################Gene chart ##############################
+#  |E   E| |P   P|  |U   U|  |E   p|  |E   u|  |P   u|  |p   U|  |P   U|
+#E  EE  EE  Ep Ep    Eu  Eu   EE Ep    EE  Eu   Ep  Eu   Ep  Eu   Ep  Eu
+#E  EE  EE  Ep Ep    Eu  Eu   EE Ep    EE  Eu   Ep  Eu   Ep  Eu   Ep  Eu
+#--
+#P  Ep  Ep
+#P  Ep  Ep
+#--
+#U  Eu  Eu 
+#U  Eu  Eu 
+#--
+#E  EE  EE
+#p  Ep  Ep
+#--
+#E  EE EE
+#u  Eu Eu
+#
+#P  Ep Ep
+#u  Eu Eu
+#
+#p  Ep Ep
+#U  Eu Eu
+#
+#P  Ep Ep
+#U  Eu Eu
+cEE = fE1 + mE1
+cPP = fP1 + mP1
+cUU = fU1 + mU1
+
+cEp = fP1 + mE1
+
+cEu = fU1 + mE1
+
+cPegaUniCR = fP1 + mU1 
+
+cAliUni = fAu + mAu
+cAliPega = fAp + mAp
+cAli = fAp + mAu
+
+#print("!! Dumping Base variables !!")
+#print(FGEP)
+#print(MGEP)
+
+#print(FGPP)
+#print(MGPP)
+
+#print(FGUP)
+#print(MGUP)
+
+#print("Dump complete")
+
+if (FGEP + FGPP + FGUP + FGEp + FGEu + FGpU + FGPu + FGPU == 1):
+ 
+ Breakout = 1
+ Bismix = 1
+ print("Mothers genes are valid")
+
+if (MGEP + MGPP + MGUP + MGEp + MGEu + MGpU + MGPu + MGPU == 1): 
+ Breakout = 1
+ Bismix = 1
+ print("Fathers genes are valid")
+
+if (FGEp + FGEu + FGPu + FGpU + FGPU == 1):
+  Fismix = 1
+  print("Mother is not pure")
+
+if (MGEp + MGEu + MGPu +MGpU + MGPU == 1):
+  print("Father is not pure")
+  Mismix = 1
+  
+
+#Chose The gene carried from the mother (psudo(?))randomly
+if (Fismix == 1):
+ if (FGEp == 1):
+  if (random.randint(1,2) == 1):
+   fG = fE1
+  else:
+   fG = fP1
+ elif (FGEu == 1):
+  if (random.randint(1,2) == 1):
+   fG = fE1
+  else:
+   fG = fU1
+ elif (FGPu == 1):
+   if (random.randint(1,2) == 1):
+    fG = fP1
+   else:
+    fG = fU1
+ elif (FGpU == 1):
+   if (random.randint(1,2) == 1):
+    fG = fU1
+   else:
+    fG = fP1
+ elif (FGPU == 1):
+   if (random.randint(1,2) == 1):
+    fG = 4 # Unicorn Pure from alicorn
+   else:
+    fG = 5
+ else:
+  print("Bug, if none are true and your in here, then the ismix check is wrong")
+#This is to set the Genes for Pure Pegas
+else:
+ if(FGEP == 1):
+  fG = 1
+ elif (FGPP == 1):
+  fG = 2
+  fPureP = 1
+ elif (FGUP == 1):
+  fG = 3
+  fPureU = 1
+  
+  
+
+#Chose The gene carried over from the father (psudo(?))Randomly
+if (Mismix == 1):
+ if (MGEp == 1):
+  if (random.randint(1,2) == 1):
+   mG = mE1
+  else:
+   mG = mP1
+ elif (MGEu == 1):
+  if (random.randint(1,2) == 1):
+    mG = mE1
+  else:
+    mG = mU1
+ elif (MGPu == 1):
+  if (random.randint(1,2) == 1):
+    mG = mP1
+  else:
+    mG = mU1
+ elif (MGpU == 1):
+  if (random.randint(1,2) == 1):
+    mG = mU1
+  else:
+    mG = mP1
+ elif (MGPU == 1):
+  if (random.randint(1,2) == 1):
+   mG = 4 # Unicorn Pure from alicorn
+  else:
+   mG = 5 # Pega pure from alicorn
+ else:
+     print("Bug, if none are true and your in here, then the ismix check is wrong")
+else:
+ if (MGEP == 1):
+  mG = 1
+ elif (MGPP == 1):
+  mG = 2
+  mPureP = 1
+ elif (MGUP == 1):
+  mG = 3
+  mPureU = 1
+ else:
+  print("bugM")
+
+print(fG)
+print(mG)
+
+#TODO: add the Gene combiner [ DONE: ]
+#TODO: These| -cEE, -cPP, -cUU, -cEp, cEu, -cPegaUniC, cAliPega, cAliUni, Cali [ DONE: ]
+if (Breakout == 1):
+ if (Bismix != 0):
+  if (fG + mG == cEE):
+   print("Foal is EARTH PURE")
+   if (CaniJabber ==  1):
+    hexchat.command("say Foal is EARTH PURE")
+  elif (fG + mG == cPP):
+   print("Foal is PEGA PURE")
+   if (CaniJabber == 1):
+    hexchat.command("say Foal is PEGA PURE")
+  elif (fG + mG == cUU):
+   print("Foal is PURE UNI")
+   if (CaniJabber == 1):
+    hexchat.command("say Foal is PURE UNI")
+  elif (fG + mG == cEp):
+   print("Foal is Earth with Recesive PEGA")
+   if (CaniJabber ==  1):
+    hexchat.command("say Foal is Earth with Recesive PEGA")
+  elif (fG + mG == cEu):
+   print("Foal is Earth with Recesive UNI")
+   if (CaniJabber == 1):
+    hexchat.command("say Foal is Earth with Recesive UNI")
+  elif (fG + mG == cPegaUniCR):
+# This determines if the foal is Pega or uni if Both Pega and Uni genes are passed down
+    if (random.randint(1,2) == 1):
+     print("Foal is PEGA with Recesive UNI")
+     if (CaniJabber ==  1):
+      hexchat.command("say Foal is PEGA with Recesive UNI")
+    else:
+     print("Foal is UNI with Recesive PEGA")
+     if (CaniJabber == 1):
+      hexchat.command("say Foal is UNI with Recesive PEGA")
+  elif (fG + mG == cAliPega):
+     print("Foal is a PURE PEGA born from an Alicorn parent(s)")
+     if (CaniJabber == 1):
+      hexchat.command("say Foal is PURE PEGA born from and Alicorn parent(s)")
+  elif (fG + mG == cAliUni):
+     print("Foal is a Pure Uni born from an Alicorn parent(s)")
+     if (CaniJabber == 1):
+      hexchat.command("say Foal is PURE UNI born from an Alicorn parent(s)")
+  elif (fG + mG == cAli):
+     print("Foal is an alicorn of alicorn desent")
+     if (CaniJabber == 1):
+      hexchat.command("say Foal is an Alicorn of Alicorn desent")
+  elif (fPureU == mPureP | fPureP == mPureU):
+     print("Foal is an Alicorn from Non Alicorn Parents, Congrats")
+     if (CaniJabber == 1):
+      hexchat.command("say Foal is an Alicorn from non Alicorn parents")
+ else:
+  print("bugE")
+
+#Once your all done, Generate the gender (Psudo(?))Randomly
+if (random.randint(1,2) == 1):
+ print("The foal is a Girl")
+ if (CaniJabber == 1):
+  hexchat.command("say The foal is a Girl ")
+else:
+  print("The foal is a Boy")
+  if (CaniJabber == 1):
+   hexchat.command("say The foal is a Boy ")
+
+#hexchat.command("say (( I'm to lazy to Add all the Commands for the Races atm :P ))")
+
+## Depricated ##
+# elif (FGEP ==  MGEP):
+#    print("Foal is PURE EARTH")
+#  elif (FGPP == MGPP):
+#   print("Foal is PURE PEGA")
+#  elif (FGUP == MGUP):
+#   print("Foal is PURE UNI")
+#  elif (FGEP == MGPP):
+#   print("Foal is Earth with recessive Pega genes")
+#  elif (FGPP == MGEP):
+#   print("Foal is Earth with recessive Pega genes")
+#  elif (FGEP == MGUP):
+#   print("Foal is Earth with recessive Uni genes")
+#  elif (FGUP == MGEP):
+#   print("Foal is Earth with recessive Uni genes")
+#  elif (FGPP == MGUP):
+#   print("Foal is Alicorn")
+#  elif (FGUP == MGPP):
+#   print("Foal is Alicorn")
+#else:
+# print("Bug somewhere... Get the Bug sqashers")
+#else:
+# print("BREAKOUT is true, Can't go any farther")
+
